@@ -7,3 +7,5 @@ https://shell4026.github.io/VCC/
 or
 
 ![vcc](https://github.com/Shell4026/VCC/assets/104874910/b6e62237-67fe-4a4b-a415-12080ca64f01)
+
+Paste this : https://Shell4026.github.io/VCC/index.json
