@@ -4,15 +4,15 @@
     "url":"https://Shell4026.github.io/VCC/index.json",
     "author":{
         "name":"Shell",
-        "url":"https://github.com/Shell4026/VCC"
+        "url":"https://github.com/Shell4026"
     },
-    "description":"Shell VCC packages",
+    "description":"Shell's VCC packages",
     "infoLink":{
-        "url":"https://github.com/Shell4026/VCC",
+        "url":"http://github.com/Shell4026/VCC",
         "text":"View on GitHub"
     },
     "bannerUrl":"banner.png",
     "githubRepos":[
-        "https://github.com/Shell4026/ShellProtector"
+        "Shell4026/ShellProtector"
     ]
 }
