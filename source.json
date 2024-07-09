@@ -14,5 +14,13 @@
     "bannerUrl":"banner.png",
     "githubRepos":[
         "Shell4026/ShellProtector"
+    ],
+    "packages":[
+        {
+            "name":"shell.protect",
+            "releases":[
+                "https://github.com/Shell4026/ShellProtector/archive/refs/tags/1.12.0.zip"
+            ]
+        }
     ]
 }
