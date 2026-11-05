@@ -1,0 +1,52 @@
+diff --git a/PackageBuilder/Build.cs b/PackageBuilder/Build.cs
+index 791bc40..a4ff726 100644
+--- a/PackageBuilder/Build.cs
++++ b/PackageBuilder/Build.cs
+@@ -338,7 +338,7 @@ namespace VRC.PackageManagement.Automation
+             
+             foreach (Octokit.Release release in releases)
+             {
+-                result.AddRange(release.Assets.Where(asset => asset.Name.EndsWith(".zip")).Select(asset => asset.BrowserDownloadUrl));
++                result.AddRange(release.Assets.Where(asset => asset.Name.EndsWith(".zip") && !asset.Name.StartsWith("ShellProtectorOSC")).Select(asset => asset.BrowserDownloadUrl));
+             }
+ 
+             return result;
+@@ -360,13 +360,36 @@ namespace VRC.PackageManagement.Automation
+             return result;
+         }
+ 
++        static async Task<HttpResponseMessage> GetWithRetry(string url)
++        {
++            const int maxAttempts = 6;
++            for (int attempt = 1; ; attempt++)
++            {
++                try
++                {
++                    var response = await Http.GetAsync(url);
++                    if (response.IsSuccessStatusCode || (int)response.StatusCode == 404 || attempt == maxAttempts)
++                    {
++                        return response;
++                    }
++                    Serilog.Log.Warning($"HTTP {(int)response.StatusCode} for {url} (attempt {attempt}/{maxAttempts}), retrying");
++                    response.Dispose();
++                }
++                catch (Exception e) when ((e is HttpRequestException || e is TaskCanceledException) && attempt < maxAttempts)
++                {
++                    Serilog.Log.Warning($"{e.GetType().Name} for {url} (attempt {attempt}/{maxAttempts}): {e.Message}, retrying");
++                }
++                await Task.Delay(TimeSpan.FromSeconds(Math.Min(60, 5 * Math.Pow(2, attempt - 1))));
++            }
++        }
++
+         async Task<VRCPackageManifest> HashZipAndReturnManifest(string url)
+         {
+-            using (var response = await Http.GetAsync(url))
++            using (var response = await GetWithRetry(url))
+             {
+                 if (!response.IsSuccessStatusCode)
+                 {
+-                    Assert.Fail($"Could not find valid zip file at {url}");
++                    Assert.Fail($"Could not find valid zip file at {url} (HTTP {(int)response.StatusCode})");
+                 }
+ 
+                 // Get manifest or return null

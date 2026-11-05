@@ -36,8 +36,14 @@ jobs:
         with:
           repository: vrchat-community/package-list-action
           path: ${{env.pathToCi}}
+          ref: cb31c3b5d17d1070d7741c61de2ca1b219224039 # pinned so the patch below always applies
           clean: false # otherwise the local repo will no longer be checked out
-          
+
+      # Retry flaky release downloads (504 etc.) instead of failing the whole run,
+      # and skip ShellProtectorOSC*.zip assets, which are not VPM packages.
+      - name: Patch automation repo
+        run: git -C ${{env.pathToCi}} apply $GITHUB_WORKSPACE/.github/patches/package-list-action.patch
+
       - name: Restore Cache
         uses: actions/cache@v4
         with:
