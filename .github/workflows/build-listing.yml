@@ -44,6 +44,17 @@ jobs:
       - name: Patch automation repo
         run: git -C ${{env.pathToCi}} apply $GITHUB_WORKSPACE/.github/patches/package-list-action.patch
 
+      # Runner images now default to .NET SDK 11, which builds PackageBuilder's
+      # net6.0 and net8.0 targets into the same bin/Debug folder in parallel and
+      # fails on a locked PackageBuilder.deps.json. Pin the build to SDK 8.
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Pin .NET SDK version
+        run: echo '{"sdk":{"version":"8.0.100","rollForward":"latestFeature"}}' > global.json
+
       - name: Restore Cache
         uses: actions/cache@v4
         with:
